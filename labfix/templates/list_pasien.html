@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow-sm border-0 border-top border-primary border-4">
+    <div class="card-body p-4">
+        <h4 class="card-title text-primary mb-4"><i class="bi bi-people-fill"></i> Data Induk Pasien</h4>
+        
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th width="10%">ID Pasien</th>
+                        <th width="30%">Nama Lengkap</th>
+                        <th width="15%">Usia</th>
+                        <th width="45%">Riwayat Medis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in pasien %}
+                    <tr>
+                        <td class="text-center fw-bold text-muted">#{{ p['id'] }}</td>
+                        <td>{{ p['nama'] }}</td>
+                        <td class="text-center">{{ p['umur'] }} Tahun</td>
+                        <td><span class="badge bg-light text-danger border border-danger">{{ p['riwayat_medis'] }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="/" class="btn btn-secondary mt-3">⬅ Kembali ke Dashboard</a>
+    </div>
+</div>
+{% endblock %}
