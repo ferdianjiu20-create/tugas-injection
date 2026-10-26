@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-5 mb-4 bg-white rounded-3 shadow-sm text-center border-top border-primary border-5">
+    <h1 class="display-5 fw-bold text-primary">Selamat Datang di SIRS</h1>
+    <p class="col-md-8 mx-auto fs-5 text-muted">Platform Sistem Informasi Rumah Sakit (Mode Pengujian Lingkungan Lab). Silakan pilih modul di bawah ini untuk memulai simulasi pengujian kerentanan.</p>
+</div>
+<div class="row g-4 text-center">
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm"><div class="card-body">
+            <h5 class="card-title text-purple"><i class="bi bi-shield-lock"></i> Autentikasi</h5>
+            <p class="card-text text-muted small">Login, Register & Lupa Password</p>
+            <a href="/login" class="btn btn-outline-primary btn-sm">Buka Modul</a>
+        </div></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm"><div class="card-body">
+            <h5 class="card-title text-danger"><i class="bi bi-search"></i> Rekam Medis</h5>
+            <p class="card-text text-muted small">Pencarian Data Pasien</p>
+            <a href="/search" class="btn btn-outline-danger btn-sm">Buka Modul</a>
+        </div></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm"><div class="card-body">
+            <h5 class="card-title text-success"><i class="bi bi-capsule"></i> Farmasi</h5>
+            <p class="card-text text-muted small">E-Resep & Racikan Dokter</p>
+            <a href="/racik" class="btn btn-outline-success btn-sm">Buka Modul</a>
+        </div></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm"><div class="card-body">
+            <h5 class="card-title text-info"><i class="bi bi-terminal"></i> IT Server</h5>
+            <p class="card-text text-muted small">Utilitas Jaringan Server</p>
+            <a href="/ping" class="btn btn-outline-info btn-sm">Buka Modul</a>
+        </div></div>
+    </div>
+</div>
+{% endblock %}
