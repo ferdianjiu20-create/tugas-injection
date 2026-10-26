@@ -3,7 +3,6 @@ import sqlite3
 import subprocess
 import platform
 from datetime import datetime
-import re
 
 app = Flask(__name__)
 app.secret_key = 'kunci_rahasia_lab_sirs' # Wajib untuk menggunakan session
@@ -30,14 +29,11 @@ def login():
     password = request.form.get('password')
     conn = get_db_connection()
     
-    # ✅ AMAN: Menggunakan Parameterized Query (Prepared Statements)
-    # Tanda '?' berfungsi sebagai placeholder yang aman dari SQL Injection
-    query = "SELECT * FROM users WHERE username = ? AND password = ?"
+    # ❌ VULNERABLE SQL INJECTION (Biarkan untuk lab jika ingin diuji, atau sesuaikan jika ingin dipatch)
+    query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
     
     try:
-        # Masukkan variabel username dan password ke dalam tuple pada parameter kedua execute()
-        user = conn.execute(query, (username, password)).fetchone()
-        
+        user = conn.execute(query).fetchone()
         if user:
             # Set sesi pengguna jika berhasil login
             session['username'] = user['username']
@@ -64,14 +60,9 @@ def search():
     if not nama: return render_template('search.html')
         
     conn = get_db_connection()
-    # ✅ AMAN: Menggunakan Parameterized Query dengan operator LIKE
-    # Tanda '?' adalah placeholder aman, dan simbol '%' digabung di dalam tuple parameter
-    query = "SELECT * FROM pasien WHERE nama LIKE ?"
-    
+    query = f"SELECT * FROM pasien WHERE nama = '{nama}'"
     try:
-        # '%'+ nama + '%' membuat pencarian fleksibel (mencari nama yang mengandung kata tersebut)
-        pasien = conn.execute(query, ('%' + nama + '%',)).fetchall()
-        
+        pasien = conn.execute(query).fetchall()
         return render_template('search.html', pasien=pasien, query=query, submitted=True)
     except sqlite3.Error as e:
         return render_template('search.html', error=str(e), query=query, submitted=True)
@@ -104,37 +95,19 @@ def ping():
     if request.method == 'GET': return render_template('ping.html')
         
     ip = request.form.get('ip')
-    
-    # ✅ VALIDASI INPUT: Pastikan hanya berisi karakter yang diizinkan untuk IP/Hostname 
-    # (Alfanumerik, titik, dan tanda hubung/strip) guna mencegah injeksi simbol terminal
-    if not re.match(r"^[a-zA-Z0-9.-]+$", ip):
-        return render_template('ping.html', error="Input tidak valid! Karakter khusus tidak diizinkan.", command=ip, submitted=True)
-
-    # ✅ MENENTUKAN PERINTAH DALAM BENTUK LIST (Bukan String)
-    # Ini wajib agar Python tidak menggunakan shell
-    cmd_prefix = ["ping", "-n", "1"] if platform.system().lower() == "windows" else ["ping", "-c", "1"]
-    
-    # Menggabungkan list command dengan input IP yang sudah divalidasi
-    command_list = cmd_prefix + [ip]
-
+    cmd_prefix = "ping -n 1" if platform.system().lower() == "windows" else "ping -c 1"
+    command = f"{cmd_prefix} {ip}"
     try:
-        # ✅ AMAN: Menggunakan shell=False (default) dan timeout untuk mencegah gantung (hanging)
-        output = subprocess.check_output(command_list, text=True, stderr=subprocess.STDOUT, timeout=5)
-        
-        # Untuk ditampilkan di UI (dijadikan string kembali agar rapi)
-        command_display = " ".join(command_list)
-        return render_template('ping.html', output=output, command=command_display, submitted=True)
-        
-    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-        error_output = e.output if hasattr(e, 'output') else str(e)
-        command_display = " ".join(command_list)
-        return render_template('ping.html', error=error_output, command=command_display, submitted=True)
+        output = subprocess.check_output(command, shell=True, text=True, stderr=subprocess.STDOUT)
+        return render_template('ping.html', output=output, command=command, submitted=True)
+    except subprocess.CalledProcessError as e:
+        return render_template('ping.html', error=e.output, command=command, submitted=True)
+
 @app.route('/list_pasien')
 def list_pasien():
     if 'username' not in session: return redirect(url_for('login'))
     
     conn = get_db_connection()
-    # Mengambil seluruh data pasien
     pasien = conn.execute("SELECT * FROM pasien").fetchall()
     conn.close()
     
@@ -145,11 +118,34 @@ def list_dokter():
     if 'username' not in session: return redirect(url_for('login'))
     
     conn = get_db_connection()
-    # Mengambil hanya user yang memiliki role 'Dokter'
     dokter = conn.execute("SELECT id, username, role FROM users WHERE role = 'Dokter'").fetchall()
     conn.close()
     
     return render_template('list_dokter.html', dokter=dokter)
+
+# --- RUTE DETAIL PASIEN (AMAN / PATCHED DARI SQL INJECTION) ---
+@app.route('/detail_pasien', methods=['GET'])
+def detail_pasien():
+    if 'username' not in session: 
+        return redirect(url_for('login'))
+    
+    id_pasien = request.args.get('id')
+    if not id_pasien:
+        return "Parameter ID pasien tidak ditemukan.", 400
+        
+    conn = get_db_connection()
+    
+    # AMAN: Menggunakan parameterized query (?) alih-alih f-string
+    query = "SELECT * FROM pasien WHERE id = ?"
+    
+    try:
+        # Kirim id_pasien sebagai tuple parameter kedua pada execute()
+        pasien_list = conn.execute(query, (id_pasien,)).fetchall()
+        return render_template('detail.html', pasien_list=pasien_list, query=query, submitted=True)
+    except sqlite3.Error as e:
+        return render_template('detail.html', error=str(e), query=query, submitted=True)
+    finally:
+        conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
