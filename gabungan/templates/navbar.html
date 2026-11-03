@@ -1,0 +1,48 @@
+<!-- NAVIGASI UTAMA SISTEM RUMAH SAKIT -->
+<nav style="background-color: #0d6efd; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; margin-bottom: 15px;">
+    <div>
+        <a href="{{ url_for('index') }}" style="color: white; font-weight: bold; margin-right: 20px; text-decoration: none; font-size: 1.1rem;">🏥 SIRS APP</a>
+        <a href="{{ url_for('search') }}" style="color: #e3f2fd; margin-right: 15px; text-decoration: none;">Daftar Pasien</a>
+        <a href="{{ url_for('search') }}" style="color: #e3f2fd; margin-right: 15px; text-decoration: none;">Cari Data</a>
+        <a href="{{ url_for('catatan_medis') }}" style="color: #e3f2fd; margin-right: 15px; text-decoration: none;">Portal Dokter (XSS/CSRF)</a>
+        <a href="{{ url_for('ping') }}" style="color: #e3f2fd; margin-right: 15px; text-decoration: none;">IT Server (Ping)</a>
+        <a href="{{ url_for('search_reflected') }}" style="color: #e3f2fd; margin-right: 15px; text-decoration: none;">Cari Dokter (Reflected XSS)</a>
+    </div>
+    <div>
+        {% if session.get('username') %}
+            <a href="{{ url_for('logout') }}" style="background-color: #dc3545; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">Logout ({{ session['username'] }})</a>
+        {% endif %}
+    </div>
+</nav>
+
+<!-- STRIP SAKELAR GLOBAL MODE KEAMANAN -->
+<div style="background-color: #212529; padding: 12px 20px; border-radius: 6px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; color: white;">
+    <div>
+        <span style="font-size: 0.9rem;">Status Keamanan Global: </span>
+        {% if session.get('secure_mode') %}
+            <strong style="color: #20c997;">[ 🛡️ SECURE MODE ACTIVE ]</strong>
+        {% else %}
+            <strong style="color: #ffda6a;">[ ⚠️ VULNERABLE MODE ACTIVE ]</strong>
+        {% endif %}
+    </div>
+
+    <div>
+        {% if session.get('secure_mode') %}
+            <a href="{{ url_for('toggle_mode') }}" style="background-color: #198754; color: white; padding: 6px 14px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 0.85rem;">
+                🛡️ SECURE (Klik untuk Ubah ke Vulnerable)
+            </a>
+        {% else %}
+            <a href="{{ url_for('toggle_mode') }}" style="background-color: #dc3545; color: white; padding: 6px 14px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 0.85rem;">
+                ⚠️ VULNERABLE (Klik untuk Ubah ke Secure)
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- PANEL LIVE INSPEKSI KUERI / PERINTAH BACKEND -->
+{% if executed_query or executed_command %}
+<div style="background-color: #0f172a; border-left: 5px solid {% if session.get('secure_mode') %}#10b981{% else %}#ef4444{% endif %}; color: #f8fafc; padding: 15px; margin-bottom: 25px; border-radius: 4px; font-family: monospace;">
+    <strong style="color: #94a3b8; font-size: 0.85rem;">🔍 LIVE BACKEND EXECUTED COMMAND / QUERY LOG:</strong>
+    <pre style="margin: 8px 0 0 0; color: {% if session.get('secure_mode') %}#34d399{% else %}#fca5a5{% endif %}; white-space: pre-wrap; font-size: 0.95rem;">{{ executed_query or executed_command }}</pre>
+</div>
+{% endif %}
