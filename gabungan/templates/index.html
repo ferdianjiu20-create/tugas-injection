@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard SIRS Security Lab</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f8f9;
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        /* Banner Header Welcome */
+        .welcome-card {
+            background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.15);
+            margin-bottom: 25px;
+        }
+        .welcome-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        .welcome-card p {
+            opacity: 0.95;
+            font-size: 0.95rem;
+        }
+
+        /* Grid Layout untuk Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        /* Card Item Styling */
+        .lab-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 22px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .lab-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            color: #052c65;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .card-desc {
+            font-size: 0.9rem;
+            color: #6c757d;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        .card-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            width: fit-content;
+        }
+        .badge-sqli { background-color: #ffe6e6; color: #dc3545; }
+        .badge-cmd { background-color: #fff3cd; color: #856404; }
+        .badge-xss { background-color: #d1e7dd; color: #0f5132; }
+
+        .btn-card {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            background-color: #0d6efd;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .btn-card:hover {
+            background-color: #0b5ed7;
+        }
+        
+        /* Information Section Card */
+        .info-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid #0d6efd;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .info-card h4 {
+            color: #052c65;
+            margin-bottom: 8px;
+        }
+        .info-card ul {
+            margin-left: 20px;
+            color: #495057;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Panggil Navigasi & Sakelar Global -->
+        {% include 'navbar.html' %}
+
+        <!-- Welcome Banner Card -->
+        <div class="welcome-card">
+            <h2>🏥 Selamat Datang di SIRS Security Laboratory</h2>
+            <p>Pengguna Aktif: <strong>{{ session.get('username') }}</strong> | Peran: <strong>{{ session.get('role', 'User') }}</strong></p>
+        </div>
+
+        <!-- Grid Layout untuk Fitur & Laboratorium Celah -->
+        <div class="card-grid">
+            
+            <!-- Card 1: SQL Injection (Auth Bypass) -->
+            <div class="lab-card">
+                <div>
+                    <div class="card-header-icon">🔍</div>
+                    <span class="card-badge badge-sqli">SQL Injection</span>
+                    <div class="card-title">Pencarian Pasien</div>
+                    <p class="card-desc">
+                        Modul pencarian data medis pasien. Digunakan untuk simulasi SQL Injection berbasis pemotongan kueri string <em>(SQL String Concatenation)</em>.
+                    </p>
+                </div>
+                <a href="{{ url_for('search') }}" class="btn-card">Akses Fitur Pencarian &rarr;</a>
+            </div>
+
+            <!-- Card 2: UNION SQLi -->
+            <div class="lab-card">
+                <div>
+                    <div class="card-header-icon">📄</div>
+                    <span class="card-badge badge-sqli">UNION-based SQLi</span>
+                    <div class="card-title">Detail Rekam Medis</div>
+                    <p class="card-desc">
+                        Pengujian eksfiltrasi data pengguna via parameter URL (`/detail_pasien?id=...`) menggunakan perintah `UNION SELECT`.
+                    </p>
+                </div>
+                <a href="{{ url_for('detail_pasien') }}" class="btn-card">Uji Parameter Detail &rarr;</a>
+            </div>
+
+            <!-- Card 3: OS Command Injection -->
+            <div class="lab-card">
+                <div>
+                    <div class="card-header-icon">🖥️</div>
+                    <span class="card-badge badge-cmd">Command Execution</span>
+                    <div class="card-title">IT Server Ping</div>
+                    <p class="card-desc">
+                        Modul utilitas jaringan untuk melakukan tes koneksi IP. Rentan terhadap penggabungan perintah sistem terminal (`shell=True`).
+                    </p>
+                </div>
+                <a href="{{ url_for('ping') }}" class="btn-card">Buka IT Server Ping &rarr;</a>
+            </div>
+
+            <!-- Card 4: Stored XSS & CSRF -->
+            <div class="lab-card">
+                <div>
+                    <div class="card-header-icon">👨‍⚕️</div>
+                    <span class="card-badge badge-xss">XSS & CSRF</span>
+                    <div class="card-title">Portal Catatan Medis</div>
+                    <p class="card-desc">
+                        Modul penginputan instruksi dokter. Digunakan untuk simulasi eksekusi skrip JavaScript tersimpan (Stored XSS) dan pemalsuan form (CSRF).
+                    </p>
+                </div>
+                <a href="{{ url_for('catatan_medis') }}" class="btn-card">Masuk Portal Dokter &rarr;</a>
+            </div>
+
+        </div>
+
+        <!-- Info / Quick Guide Card -->
+        <div class="info-card">
+            <h4>💡 Panduan Penggunaan Modul Sakelar (Toggle Switch):</h4>
+            <ul>
+                <li>Gunakan tombol sakelar pada baris navigasi atas untuk mengubah status keamanan dari <strong>VULNERABLE MODE</strong> ke <strong>SECURE MODE</strong>.</li>
+                <li>Panel hitam <em>LIVE BACKEND LOG</em> di atas akan memperlihatkan secara langsung kueri SQL mentah atau perintah terminal yang sedang dieksekusi oleh server Flask.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
