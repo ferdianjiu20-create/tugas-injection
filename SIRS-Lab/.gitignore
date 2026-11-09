@@ -1,0 +1,4 @@
+hospital.db
+__pycache__/
+.env
+instance/
