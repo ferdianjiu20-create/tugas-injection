@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Pasien - SIRS</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; background-color: #f8fafc; color: #1e293b; padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        
+        .content-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+        }
+        .header-title { font-size: 1.4rem; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+        .header-desc { font-size: 0.85rem; color: #64748b; margin-bottom: 20px; }
+        
+        .search-box { display: flex; gap: 10px; margin-bottom: 24px; }
+        .search-input {
+            flex: 1;
+            max-width: 400px;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        .btn-search {
+            padding: 10px 20px;
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        .styled-table th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            padding: 12px 16px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .styled-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+        }
+        .styled-table tbody tr:hover { background-color: #f8fafc; }
+        
+        .btn-detail {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .btn-detail:hover { background-color: #bae6fd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% include 'navbar.html' %}
+
+        <div class="content-card">
+            <div class="header-title">📋 Data & Rekam Medis Pasien</div>
+            <div class="header-desc">Modul pencarian informasi pasien terdaftar pada Sistem Informasi Rumah Sakit.</div>
+
+            <form method="GET" action="/search" class="search-box">
+                <input type="text" name="nama" value="{{ search_key or '' }}" class="search-input" placeholder="Cari berdasarkan nama pasien...">
+                <button type="submit" class="btn-search">Cari Pasien</button>
+            </form>
+
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID Pasien</th>
+                        <th>Nama Pasien</th>
+                        <th>Diagnosa Utama</th>
+                        <th>Lokasi Kamar</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in pasien_list %}
+                    <tr>
+                        <td><strong>#PAS-00{{ p.id }}</strong></td>
+                        <td>{{ p.nama }}</td>
+                        <td>{{ p.diagnosa }}</td>
+                        <td><span style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">{{ p.kamar }}</span></td>
+                        <td><a href="/detail_pasien?id={{ p.id }}" class="btn-detail">Lihat Rekam Medis &rarr;</a></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #94a3b8; padding: 20px;">Data pasien tidak ditemukan.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

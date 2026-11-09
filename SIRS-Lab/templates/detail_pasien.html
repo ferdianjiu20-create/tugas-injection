@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail Pasien - SIRS</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f8f9; padding: 20px; margin: 0; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 25px; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% include 'navbar.html' %}
+
+        <h2>📄 Detail Rekam Medis Pasien</h2>
+        <p style="color: #666;">Uji UNION-based SQLi via URL Parameter: <code>/detail_pasien?id=1 UNION SELECT 1,username,password FROM users</code></p>
+
+        {% if is_secure %}
+            {% if pasien %}
+                {% for p in pasien %}
+                    <p><strong>ID:</strong> {{ p.id }}</p>
+                    <p><strong>Nama:</strong> {{ p.nama }}</p>
+                    <p><strong>Diagnosa:</strong> {{ p.diagnosa }}</p>
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Kolom 1 (ID / Data)</th>
+                        <th>Kolom 2 (Nama / Data)</th>
+                        <th>Kolom 3 (Diagnosa / Data)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if pasien %}
+                        {% for p in pasien %}
+                        <tr>
+                            <td>{{ p[0] }}</td>
+                            <td>{{ p[1] }}</td>
+                            <td>{{ p[2] }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Access Control & Privilege Test - SIRS</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f8f9; padding: 20px; margin: 0; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 25px; border-radius: 8px; }
+        .alert-danger { background-color: #f8d7da; color: #842029; padding: 15px; border-radius: 6px; border: 1px solid #f5c2c7; }
+        .card-data { background-color: #e7f1ff; border-left: 5px solid #0d6efd; padding: 20px; border-radius: 4px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% include 'navbar.html' %}
+
+        <h2>🔒 Access Control & Privilege Management Lab</h2>
+        <p style="color: #666;">Menguji apakah user yang sudah login bisa melakukan <em>Privilege Escalation / IDOR</em> dengan mengganti ID pada URL.</p>
+
+        <!-- Form Tes Manipulasi URL/Parameter -->
+        <div style="margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 6px;">
+            <form method="GET" action="/rekam_medis_privilege">
+                <label><strong>Simulasi Akses Record ID via URL:</strong></label>
+                <input type="number" name="id" value="{{ record_id }}" style="padding: 8px; width: 80px;">
+                <button type="submit" style="padding: 8px 15px; background: #0d6efd; color: white; border: none; border-radius: 4px;">Akses Data</button>
+                <span style="margin-left: 15px; font-size: 0.85rem; color: #6c757d;">(Coba ganti ke ID: 1 atau ID: 2)</span>
+            </form>
+        </div>
+
+        {% if access_granted %}
+            <div class="card-data">
+                <h3 style="color: #0b5ed7;">📄 Data Rekam Medis Rahasia (ID: {{ data.id }})</h3>
+                <p><strong>Nama Pasien:</strong> {{ data.pasien_nama }}</p>
+                <p><strong>Dokter Penanggung Jawab:</strong> {{ data.dokter_penanggung_jawab }}</p>
+                <p><strong>Diagnosa Sensitif/Rahasia:</strong> <span style="color: red; font-weight: bold;">{{ data.diagnosa_rahasia }}</span></p>
+            </div>
+        {% else %}
+            <div class="alert-danger">
+                <h3>🚫 403 ACCESS DENIED / FORBIDDEN</h3>
+                <p><strong>Gagal Mengakses Data!</strong> Anda tidak memiliki hak akses (Privilege) yang cukup untuk melihat Rekam Medis ID {{ record_id }}.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

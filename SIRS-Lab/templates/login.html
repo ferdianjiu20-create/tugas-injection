@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SIRS Security Laboratory</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; background-color: #f8fafc; color: #1e293b; padding: 20px; }
+        .main-wrapper { max-width: 1100px; margin: 0 auto; }
+        
+        .login-wrapper {
+            display: flex;
+            max-width: 900px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        .login-banner {
+            flex: 1;
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .login-banner h1 { font-size: 1.8rem; margin-bottom: 15px; font-weight: 800; }
+        .login-banner p { font-size: 0.95rem; line-height: 1.6; opacity: 0.9; }
+        
+        .login-form-side {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .form-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+        .form-subtitle { font-size: 0.85rem; color: #64748b; margin-bottom: 24px; }
+        
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #334155; }
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus { outline: none; border-color: #0284c7; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover { background-color: #0369a1; }
+        
+        .alert-error {
+            background-color: #fef2f2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        {% include 'navbar.html' %}
+
+        <div class="login-wrapper">
+            <div class="login-banner">
+                <h1>🏥 SIRS Security Portal</h1>
+                <p>Sistem Informasi Rumah Sakit TERINTEGRASI. Platform simulasi pengujian celah keamanan web berbasis alur *Client-Side Security*.</p>
+            </div>
+            
+            <div class="login-form-side">
+                <div class="form-title">Selamat Datang Kembali</div>
+                <div class="form-subtitle">Masuk ke akun petugas untuk melanjutkan</div>
+
+                {% if error %}
+                    <div class="alert-error">⚠️ {{ error }}</div>
+                {% endif %}
+
+                <form method="POST" action="/login">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" class="form-control" placeholder="Contoh: admin / dokter_budi / pasien_ani" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control" placeholder="Masukkan password..." required>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Masuk ke Sistem</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
